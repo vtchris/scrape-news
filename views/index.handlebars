@@ -1,22 +1,15 @@
-{{!-- <div class="table">
-
 {{#each articles}}
-    <tr><td>{{this.date_published}}</td><td><a href={{this.link}} target="_blank"><h5>{{this.title}}</h5></a></td><td>{{this.summary}}</td></tr>
-    
-{{/each}}
-</div> --}}
-
-    {{#each articles}}
-    <div class="card">
-        <div class="card-header">
-            <a href={{this.link}} target="_blank">
-                <h5>{{this.title}}</h5>
-            </a>
-        </div>
-        <div class="card-body">
-            {{this.summary}}
-        </div>
-
+<div data-id="{{this.id}}" class="card">
+    <div class="card-header">
+        <a href={{this.link}} target="_blank">
+            <h5>{{this.title}}</h5>
+        </a>
     </div>
-        {{/each}}
- 
+    <div id="summary" class="card-body">
+        {{this.summary}}
+    </div>
+    <div class="card-footer">
+        <button class="btn btn-primary js_saveArticle">Save</button>
+    </div>
+</div>
+{{/each}}
