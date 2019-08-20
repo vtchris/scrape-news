@@ -48,8 +48,25 @@ module.exports = function (app) {
             });
      
         }).then(function () {
-            res.render("index", { articles: articles })
+            res.render("index", { articles: articles, source: "scrape" })
         })
+    });
+    app.get("/articles", function (req, res) {
+
+        db.Article.find({}).then(function(dbArticle) {
+            // If we were able to successfully find Articles, send them back to the client
+
+            dbArticle.forEach(function(article){
+                article.source = "db";
+            })
+            
+            res.render("partials/articlesPartial", {articles: dbArticle,source1: "db"});
+          })
+          .catch(function(err) {
+            // If an error occurred, send it to the client
+            res.json(err);
+          });
+
     });
 
     // Save an article
