@@ -24,48 +24,47 @@ module.exports = function (app) {
                 var result = {};
                 var summary = $(this).find("p.teaser").find("a").text()
                 summary = summary.split("• ")
-                var link = $(this).find("h2").find("a").attr("href");               
+                var link = $(this).find("h2").find("a").attr("href");
 
                 result.title = $(this)
                     .find("h2").find("a")
                     .text();
                 result.summary = summary[1];
-                result.link = link; 
+                result.link = link;
                 result.date_published = $(this)
                     .find("time")
                     .attr("datetime");
-
-                
+                result.source = "scrape";
 
                 if (result.link && result.summary && result.title) {
                     //Get article id from the link
                     var linkParts = link.split("/")
-                    result.id = linkParts[linkParts.length-2];
-                    
+                    result.id = linkParts[linkParts.length - 2];
+
                     articles.push(result)
 
                 }
             });
-     
+
         }).then(function () {
-            res.render("index", { articles: articles, source: "scrape" })
+            res.render("index", { articles: articles })
         })
     });
     app.get("/articles", function (req, res) {
 
-        db.Article.find({}).then(function(dbArticle) {
+        db.Article.find({}).then(function (dbArticle) {
             // If we were able to successfully find Articles, send them back to the client
 
-            dbArticle.forEach(function(article){
+            dbArticle.forEach(function (article) {
                 article.source = "db";
             })
-            
-            res.render("partials/articlesPartial", {articles: dbArticle,source1: "db"});
-          })
-          .catch(function(err) {
-            // If an error occurred, send it to the client
-            res.json(err);
-          });
+
+            res.render("partials/articlesPartial", { articles: dbArticle });
+        })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
 
     });
 
@@ -74,20 +73,43 @@ module.exports = function (app) {
 
         // Find the article in the array based on the id
         var id = req.params.id
-        const article = articles.find( article => article.id === id );
-        
+        const article = articles.find(article => article.id === id);
+
         // Save new record using the article
         db.Article.create(article)
             .then(function (dbArticle) {
                 // View the added result in the console
                 console.log(dbArticle);
-                res.json({"success": true})
+                res.json({ "success": true })
             })
             .catch(function (err) {
                 // Suppress duplicate errors 
                 if (err.code !== 11000) {
                     console.log(err);
                 }
+            });
+    })
+
+    // Save a note
+    app.post("/notes/:articleId", function (req, res) {
+       
+        const id = req.params.articleId
+        const data = req.body
+        
+        db.Note.create(data)
+            .then(function (dbNote) {
+                // Add note reference to the appropriate article record 
+                return db.Article.findOneAndUpdate({ _id: id }, { note: dbNote._id }, { new: true });
+            })
+            .then(function (dbNote) {
+                // View the added result in the console
+                console.log(dbNote);
+                res.json({ "success": true })
+            })
+            .catch(function (err) {
+
+                console.log(err);
+
             });
     })
 

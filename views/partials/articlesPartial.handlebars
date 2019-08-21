@@ -8,8 +8,10 @@
     <div id="summary" class="card-body">
         {{this.summary}}
     </div>
-    <div class="card-footer">
+    <div data-id={{this.id}} class="card-footer">
         <button class="btn btn-primary js_saveArticle">Save</button>
+        <button class="btn btn-primary js_addNote">Notes</button>
     </div>
 </div>
 {{/each}}
+
