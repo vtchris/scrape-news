@@ -43,7 +43,6 @@ $(".js_addNote").on("click", function (e) {
       })
     
     })
-
     $saveNote.attr("data-id", id);
     $notesModal.modal("show");
 

@@ -2,6 +2,8 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 var mongoose = require("mongoose");
 
+
+
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/newsScrapper", { useNewUrlParser: true });
 
@@ -89,17 +91,32 @@ module.exports = function (app) {
                 }
             });
     })
+    // Route for grabbing a specific Article by id, populate it with it's note
+    app.get("/articles/:id", function (req, res) {
+        // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+        db.Article.findOne({ _id: req.params.id })
+            // ..and populate all of the notes associated with it
+            .populate("note")
+            .then(function (dbArticle) {
+                // If we were able to successfully find an Article with the given id, send it back to the client
+                res.json(dbArticle);
+            })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
+    });
 
     // Save a note
     app.post("/notes/:articleId", function (req, res) {
-       
+
         const id = req.params.articleId
         const data = req.body
         
         db.Note.create(data)
             .then(function (dbNote) {
                 // Add note reference to the appropriate article record 
-                return db.Article.findOneAndUpdate({ _id: id }, { note: dbNote._id }, { new: true });
+                return db.Article.findOneAndUpdate({ _id: id }, { $push: { note: dbNote._id } }, { new: true });
             })
             .then(function (dbNote) {
                 // View the added result in the console
@@ -112,5 +129,36 @@ module.exports = function (app) {
 
             });
     })
+    app.delete("/notes/:noteId", function (req, res) {
+
+        // Remove a note using the objectID
+        db.Note.findByIdAndRemove(
+            req.params.noteId,
+            function (error, removed) {
+                // Log any errors from mongojs
+                if (error) {
+                    console.log(error);
+                    res.send(error);
+                }
+                else {
+                    // Otherwise, send the mongojs response to the browser
+                    // This will fire off the success function of the ajax request
+                   
+                    //console.log(removed);
+                    console.log(removed.articleId)
+                    console.log(removed._id)
+                    db.Article.findOneAndUpdate({ _id: removed.articleId }, { $pull: { note: removed._id}}).then(function(resp){
+                        console.log("Im Finished")
+                        //console.log(resp)
+                    });
+
+
+                    res.send(removed);
+                }
+            }
+        )
+    })
+
+    
 
 }
