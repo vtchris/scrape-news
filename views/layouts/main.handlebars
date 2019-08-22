@@ -15,9 +15,9 @@
     {{!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> --}}
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="/css/syles.css" type="text/css" />
+    <link rel="stylesheet" href="/css/styles.css" type="text/css" />
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery.js"></script>
@@ -60,14 +60,20 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title-notes">Modal title</h5>
+                    <h5 class="modal-title" id="notes-title">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div id="note-container">
+                        <ul id="notes-ul"></ul>
+                    </div>
+
+
+
                     <input id="note-txt" type="text" placeholder="Notes">
-                    
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
