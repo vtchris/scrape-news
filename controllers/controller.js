@@ -2,8 +2,10 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 var mongoose = require("mongoose");
 
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsScraper"
+
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/newsScraper", { useNewUrlParser: true });
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // Require all models
 var db = require("../models");
