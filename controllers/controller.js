@@ -2,10 +2,8 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 var mongoose = require("mongoose");
 
-
-
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/newsScrapper", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost/newsScraper", { useNewUrlParser: true });
 
 // Require all models
 var db = require("../models");
@@ -19,37 +17,48 @@ module.exports = function (app) {
         axios.get("https://www.npr.org/sections/news/").then(function (response) {
             // Then, we load that into cheerio and save it to $ for a shorthand selector
             var $ = cheerio.load(response.data);
+            let savedArticles = []
 
-            // Now, find the articles
-            $("article").each(function (i, element) {
-                // Save an empty result object
-                var result = {};
-                var summary = $(this).find("p.teaser").find("a").text()
-                summary = summary.split("• ")
-                var link = $(this).find("h2").find("a").attr("href");
+            db.Article.find({}).then(function (saved) {
+                savedArticles = saved.map(x => x.link);
+                //console.log(savedArticles)
+            }).then(function () {
 
-                result.title = $(this)
-                    .find("h2").find("a")
-                    .text();
-                result.summary = summary[1];
-                result.link = link;
-                result.date_published = $(this)
-                    .find("time")
-                    .attr("datetime");
-                result.source = "scrape";
+                // Now, find the articles
+                $("article").each(function (i, element) {
+                    // Save an empty result object
+                    var result = {};
+                    var summary = $(this).find("p.teaser").find("a").text()
+                    summary = summary.split("• ")
+                    var link = $(this).find("h2").find("a").attr("href");
 
-                if (result.link && result.summary && result.title) {
-                    //Get article id from the link
-                    var linkParts = link.split("/")
-                    result.id = linkParts[linkParts.length - 2];
+                    //Do not scrape duplicate articles
+                    if (articles.find(x => x.link === link) === undefined && savedArticles.find(x => x === link) === undefined) {
 
-                    articles.push(result)
+                        result.title = $(this)
+                            .find("h2").find("a")
+                            .text();
+                        result.summary = summary[1];
+                        result.link = link;
+                        result.date_published = $(this)
+                            .find("time")
+                            .attr("datetime");
+                        result.source = "scrape";
 
-                }
-            });
+                        if (result.link && result.summary && result.title) {
+                            //Get article id from the link
+                            var linkParts = link.split("/")
+                            result.id = linkParts[linkParts.length - 2];
 
-        }).then(function () {
-            res.render("index", { articles: articles })
+                            articles.push(result);
+
+                        }
+                    }
+                });
+
+            }).then(function () {
+                res.render("index", { articles: articles })
+            })
         })
     });
     app.get("/articles", function (req, res) {
@@ -61,7 +70,7 @@ module.exports = function (app) {
                 article.source = "db";
             })
 
-            res.render("partials/articlesPartial", { articles: dbArticle });
+            res.render("partials/savedArticlesPartial", { articles: dbArticle });
         })
             .catch(function (err) {
                 // If an error occurred, send it to the client
@@ -69,19 +78,18 @@ module.exports = function (app) {
             });
 
     });
-
     // Save an article
     app.post("/articles/:id", function (req, res) {
 
         // Find the article in the array based on the id
-        var id = req.params.id
+        var id = req.params.id;
         const article = articles.find(article => article.id === id);
 
         // Save new record using the article
         db.Article.create(article)
             .then(function (dbArticle) {
                 // View the added result in the console
-                console.log(dbArticle);
+                //console.log(dbArticle);
                 res.json({ "success": true })
             })
             .catch(function (err) {
@@ -112,7 +120,7 @@ module.exports = function (app) {
 
         const id = req.params.articleId
         const data = req.body
-        
+
         db.Note.create(data)
             .then(function (dbNote) {
                 // Add note reference to the appropriate article record 
@@ -120,7 +128,7 @@ module.exports = function (app) {
             })
             .then(function (dbNote) {
                 // View the added result in the console
-                console.log(dbNote);
+                //console.log(dbNote);
                 res.json({ "success": true })
             })
             .catch(function (err) {
@@ -143,22 +151,24 @@ module.exports = function (app) {
                 else {
                     // Otherwise, send the mongojs response to the browser
                     // This will fire off the success function of the ajax request
-                   
+
                     //console.log(removed);
-                    console.log(removed.articleId)
-                    console.log(removed._id)
-                    db.Article.findOneAndUpdate({ _id: removed.articleId }, { $pull: { note: removed._id}}).then(function(resp){
-                        console.log("Im Finished")
+                    //console.log(removed.articleId)
+                    //console.log(removed._id)
+                    db.Article.findOneAndUpdate({ _id: removed.articleId }, { $pull: { note: removed._id } }).then(function (resp) {
+
                         //console.log(resp)
+
+                    }).then(function () {
+                        console.log("Sending Response")
+                        res.send(removed);
+                    }).catch(function (err) {
+
+                        console.log(err);
+
                     });
-
-
-                    res.send(removed);
                 }
             }
         )
     })
-
-    
-
 }

@@ -2,6 +2,7 @@
 const $saveNote = $("#save-note-btn");
 const $notesModal = $("#notes-modal");
 const $notesTitle = $("#notes-title");
+const $noteTxt = $("#note-txt");
 const $notesUL = $("#notes-ul");
 
 $(".js_addNote").on("click", function (e) {
@@ -20,7 +21,7 @@ $(".js_addNote").on("click", function (e) {
     for (let i = 0; i < notes.length; i++) {
       let li = $("<li>");
       let btn = $("<button>");
-      li.addClass("d-flex mb-2")
+      li.addClass("d-flex mb-2 js_note")
       li.text(notes[i].text);
       btn.addClass("btn btn-sm btn-danger mr-2 js_deleteNote")
       btn.html("<span class='fa fa-window-close'></span>")
@@ -32,19 +33,25 @@ $(".js_addNote").on("click", function (e) {
     }
     //Add click handlers to new delete buttons
     $(".js_deleteNote").on("click", function (e) {
-    
+
       e.preventDefault();
-    
+
+      let that = $(this)
+
       $.ajax({
         url: "/notes/" + this.id,
         method: "DELETE"
-      }).then(res, function () {
-        console.log(res)
+      }).then(function (res) {
+
+        that.closest(".js_note").remove();
+
       })
-    
+
     })
+
     $saveNote.attr("data-id", id);
     $notesModal.modal("show");
+    $noteTxt.focus();
 
   })
 })
@@ -59,29 +66,35 @@ $(".js_saveArticle").on("click", function (e) {
   $.post("/articles/" + id).then(function (res) {
     console.log(res)
   })
+
+  $(this).closest(".card").remove();
+
 });
 $("#save-note-btn").on("click", function (e) {
 
   e.preventDefault();
 
-  const articleId = $(this).attr("data-id")
+  if ($noteTxt.val() !== "" && $noteTxt.val() !== null) {
+    const articleId = $(this).attr("data-id")
 
-  $.ajax({
-    method: "POST",
-    url: "/notes/" + articleId,
-    data: {
-      // Value taken from title input
-      //title: $("#titleinput").val(),  
-      articleId: articleId,
-      text: $("#note-txt").val()
-    }
-  })
-    // With that done
-    .then(function (data) {
-      // Log the response
-      console.log(data);
-      // Empty the notes section
-      $("#note-txt").empty();
-    });
- 
+    $.ajax({
+      method: "POST",
+      url: "/notes/" + articleId,
+      data: {
+        articleId: articleId,
+        text: $("#note-txt").val()
+      }
+    })
+      // With that done
+      .then(function (data) {
+        // Log the response
+        console.log(data);
+        // Empty the notes section
+        $("#note-txt").val("");
+        $notesModal.modal("hide");
+
+      });
+  }
+
+
 })
