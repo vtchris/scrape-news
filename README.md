@@ -27,10 +27,10 @@ Visit: https://whats-new-scraper.herokuapp.com"
     <li>Mongoose - https://mongoosejs.com</li>    
 </ul>
 
-![](public/assets/images/demo/scraperHome.jpg)
+![](public/images/demo/scraperHome.jpg)
 
 # Mobile Responsive
-![](public/assets/images/demo/scraperMobile.jpg)
+![](public/images/demo/scraperMobile.jpg)
 
 # Requirements
 # All the News That's Fit to Scrape
