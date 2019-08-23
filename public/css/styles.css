@@ -1,5 +1,7 @@
 body{
-    height:100%;
+    background-color: #dbdbdb;
+    background-image: url("../images/textured_paper.png");
+    height:100%;    
 }
 html{
     height:100%;
@@ -11,7 +13,9 @@ ul{
     display: inline-block;
     float: left;  
     margin: 10px;
+    margin-bottom: 45px;
     max-width: 400px;
+    min-width: 300px;
 }
 .card-body {
     height: 160px;
@@ -26,4 +30,13 @@ ul{
 #note-container{
     max-height: 150px;
     overflow-y: auto;
+}
+#wrapper {
+    display: block;
+    margin: 0 auto ;
+    margin-left: 2%;
+    margin-right:2%;
+    min-height: 100%; 
+                   
+    padding-bottom: 111px;          
 }
