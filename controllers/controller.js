@@ -116,7 +116,23 @@ module.exports = function (app) {
                 res.json(err);
             });
     });
+    // Save an article
+    app.delete("/articles/:id", function (req, res) {
+        
+        const articleId = req.params.id
+        console.log(articleId)
 
+        db.Note.deleteMany({"articleId": articleId})
+        .then(function(){
+            db.Article.deleteOne({"_id": articleId})
+            .then(function(){
+                res.status(200).end()
+            })
+        })
+        .then(function(){            
+            res.status(200).end()
+        })
+    })
     // Save a note
     app.post("/notes/:articleId", function (req, res) {
 

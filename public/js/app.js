@@ -48,12 +48,28 @@ $(".js_addNote").on("click", function (e) {
       })
 
     })
-
-    $saveNote.attr("data-id", id);
-    $notesModal.modal("show");
-    $noteTxt.focus();
-
   })
+
+  $saveNote.attr("data-id", id);
+  $notesModal.modal("show");
+  $noteTxt.focus();
+
+})
+// Delete article
+$(".js_deleteArticle").on("click", function (e) {
+
+  e.preventDefault();
+  const id = $(this).parent().attr("data-id");
+  const that = $(this)  
+
+  $.ajax({
+    url: "/articles/" + id,
+    method: "DELETE"
+  }).then(function (res) {
+    
+    that.closest(".card").remove();
+
+  })  
 })
 $(".js_saveArticle").on("click", function (e) {
 

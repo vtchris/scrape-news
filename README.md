@@ -6,10 +6,7 @@
   </a>
   <a href="https://github.com/vtchris/scrape-news/graphs/commit-activity">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" target="_blank" />
-  </a>
-  <a href="https://github.com/vtchris/scrape-news/blob/master/LICENSE">
-    <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" target="_blank" />
-  </a>
+  </a>  
 </p>
 
 # News Scraper
