@@ -68,6 +68,7 @@ module.exports = function (app) {
 
         db.Article.find({}).then(function (dbArticle) {
             // If we were able to successfully find Articles, send them back to the client
+            dbArticle = dbArticle.map(a => a.toJSON());
 
             dbArticle.forEach(function (article) {
                 article.source = "db";
@@ -121,7 +122,9 @@ module.exports = function (app) {
     app.delete("/articles/:id", function (req, res) {
         
         const articleId = req.params.id
+        console.log('**************************************************')
         console.log(articleId)
+        console.log('**************************************************')
 
         db.Note.deleteMany({"articleId": articleId})
         .then(function(){
