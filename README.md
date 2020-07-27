@@ -14,7 +14,11 @@ News Scrapping app
 
 This application was designed to reinforce MongoDB skills and data scraping with Axios and Cheerio. The application allows users to view current news stories, save stories of interest, and add/delete comments about the stories.
 
+# DEMO 
+![](public/images/demo/scraperDemo.gif)
+<!--
 Visit: https://whats-new-scraper.herokuapp.com"
+-->
 
 # Technology
 <ul>    
